@@ -1,56 +1,66 @@
 <?php
-require_once"db.php";
 
-class Nhanvien extends db
-{
-    function getAll()
+require_once "Db.php"; // Nạp file Db.php để sử dụng class Db
+
+class Nhanvien extends Db {
+
+    function getAll() //Lấy tất cả nhân viên
     {
-        return $this -> conn ->query
-        ("select nv.manv, nv.hoten, pb.mapb
-                from nhanvien nv
-                join phongban pb
-                on nv.mapb = pb.mapb"
+        return $this->conn->query
+        (
+            "SELECT nv.manv, nv.hoten, pb.tenpb
+                    FROM nhanvien nv 
+                    JOIN phongban pb 
+                    ON nv.mapb = pb.mapb"
         );
     }
 
-    function getById($id)
+
+    function getById($id) //Lấy nhân viên theo mã
     {
-        return $this -> conn ->query
-        ("select * from where manv = $id "
-        )->fetch_assoc();
+        return $this->conn->query
+        (
+            "SELECT * FROM nhanvien 
+                    WHERE manv = $id"
+        )
+        ->fetch_assoc(); //lấy 1 dòng duy nhất dạng mảng
     }
 
-    function getNextId()
+    function getNextId()  // Tạo mã nhân viên tự động
     {
-        $r = $this -> conn ->query
-        ("select MAX(manv) m from nhanvien"
-        )->fetch_assoc();
-        return $r['m']+1;
+        $r = $this->conn->query
+        (
+            "SELECT MAX(manv) m FROM nhanvien"
+        )
+        ->fetch_assoc();
+        return $r['m'] + 1;
     }
 
-    function insert($hoten, $mapb)
+    function insert($hoten, $mapb) 
     {
-        $id = $this->getNextId();
-        return $this -> conn ->query
-        ("insert into nhanvien values($id, '$hoten',$mapb )"
-        );
-    }
-    function update($id, $hoten, $mapb)
-    {
-        return $this -> conn ->query
-        ("update Nhanvien
-                set hoten='$hoten', mapb='$mapb'
-                where manv = $id"
-        );
-    }
-    function delete($id)
-    {
-        return $this -> conn ->query
-        ("delete from nhanvien where manv=$id"
+        $id = $this->getNextId(); //Gọi hàm tạo mã tự động
+        return $this->conn->query
+        (
+            "INSERT INTO nhanvien VALUES($id,'$hoten',$mapb)"
         );
     }
 
+    function update($id, $hoten, $mapb) 
+    {
+        return $this->conn->query
+        (
+            "UPDATE nhanvien --Bảng nào
+                    SET hoten='$hoten', mapb=$mapb -- Cột nào = giá trị nào
+                    WHERE manv=$id" // Điều kiện
+        );
+    }
+
+    function delete($id) 
+    {
+        return $this->conn->query
+        (
+            "DELETE FROM nhanvien 
+                    WHERE manv=$id"
+        );
+    }
 }
-
-
-?>
